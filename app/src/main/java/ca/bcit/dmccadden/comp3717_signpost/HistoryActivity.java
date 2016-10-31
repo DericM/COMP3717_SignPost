@@ -44,7 +44,7 @@ public class HistoryActivity extends Activity {
         });
 */
 
-        
+
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.create_message);
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
