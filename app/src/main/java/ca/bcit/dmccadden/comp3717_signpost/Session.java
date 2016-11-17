@@ -91,6 +91,19 @@ public class Session {
 
     }
 
+
+    public ArrayList<Message> getAllMessages() throws Exception {
+
+
+        Encoder encoder = new Encoder();
+
+        return parseMessages(post(encoder.getData(), GET_MESSAGES));
+
+    }
+
+
+
+
     public boolean postMessage(Message message) throws Exception {
         String msg = message.getMessage();
         Double lat = message.getLocation().latitude;
@@ -186,24 +199,44 @@ public class Session {
      * "http://signpost.nfshost.com/php/create_account.php"
      */
     public String post(String data, String address) throws Exception {
-        System.out.println("posting");
-        URL url = new URL(address);
-        URLConnection conn = url.openConnection();
-        conn.setDoOutput(true);
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+        PostThread thread = new PostThread(data, address);
+        Thread t = new Thread(thread);
 
-        wr.write(data);
-        wr.flush();
+        return "thread running";
+    }
 
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        String line;
+    class PostThread implements Runnable {
+        String data;
+        String address;
         String returnData = "";
-        while((line = reader.readLine()) != null) {
-            returnData += line + "\n";
+        boolean dataReturned = false;
+        PostThread(String data, String address) {
+            this.data = data;
+            this.address = address;
         }
 
-        return returnData;
+        @Override
+        public void run() {
+            try {
+                URL url = new URL(address);
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                wr.write(data);
+                wr.flush();
+
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    returnData += line + "\n";
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            dataReturned = true;
+        }
     }
 
     class Encoder {
@@ -230,5 +263,9 @@ public class Session {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getError() {
+        return error;
     }
 }

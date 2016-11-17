@@ -33,6 +33,9 @@ public class Message implements Parcelable {
         messages.add(new Message("deer lake",        new LatLng(49.236749, -122.973264) ));
         messages.add(new Message("central perk",     new LatLng(49.227341, -123.017770) ));
         messages.add(new Message("burnaby hospital", new LatLng(49.249498, -123.016057) ));
+        messages.add(new Message("london",           new LatLng(51.587897, -0.243054)   ));
+
+
 
         return messages;
     }

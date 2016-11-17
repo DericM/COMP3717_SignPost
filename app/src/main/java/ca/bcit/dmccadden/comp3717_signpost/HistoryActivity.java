@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -37,6 +38,7 @@ public class HistoryActivity extends Activity {
 
     //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
     private List<String> messageList;
+    List<Map<String, String>> messageMap;
 
     //DEFINING A STRING ADAPTER WHICH WILL HANDLE THE DATA OF THE LISTVIEW
     private ArrayAdapter<String> adapter;
@@ -50,9 +52,24 @@ public class HistoryActivity extends Activity {
         setContentView(R.layout.activity_history);
 
         session = new Session();
+        session.setUserId("56");
+
+        messages = new ArrayList<Message>();
+
+        messageMap = new ArrayList<>();
 
 
-        messages = Message.testMessages();
+        for(Message m:Message.testMessages())
+            messages.add(m);
+
+        /*try{
+            for(Message m:session.getAllMessages())
+                messages.add(m);
+        }
+        catch(Exception e){
+
+        }*/
+
 
         listView = (ListView) findViewById(R.id.message_history);
 
@@ -61,6 +78,23 @@ public class HistoryActivity extends Activity {
         for(int i=0; i<messages.size(); i++){
             messageList.add(messages.get(i).getMessage());
         }
+
+
+        //============
+
+        /*
+        messageMap = new ArrayList<>();;
+        //= Arrays.asList(testArray);
+        for(int i=0; i<messages.size(); i++){
+            messageMap.add();
+        }*/
+
+
+
+        //===============
+
+
+
 
         adapter = new ArrayAdapter<>(getBaseContext(),
                 android.R.layout.simple_list_item_1,
@@ -95,7 +129,6 @@ public class HistoryActivity extends Activity {
             }
         });
 
-
     }
 
     @Override
@@ -113,13 +146,10 @@ public class HistoryActivity extends Activity {
                     double longitude = data.getDoubleExtra("longitude" ,-1);
                     String s_message = data.getStringExtra("message");
 
-
                     addMessage(new Message(s_message, new LatLng(latitude, longitude)));
 
-                    //build_list();
 
                     //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
 
                 }
                 break;
@@ -128,16 +158,13 @@ public class HistoryActivity extends Activity {
     }
 
 
-    private void build_list(){
-
-    }
-
-
 
     public void addMessage(Message message){
 
         try {
-            session.postMessage(message);
+            if(!session.postMessage(message)) {
+                System.out.println(session.getError());
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -152,23 +179,12 @@ public class HistoryActivity extends Activity {
             adapter.notifyDataSetChanged();
 
 
-
-
             //adapter.add(message.getMessage());
-
-
-
 
         }
         catch(Exception e){
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
-
-
     }
-
-
-
 }

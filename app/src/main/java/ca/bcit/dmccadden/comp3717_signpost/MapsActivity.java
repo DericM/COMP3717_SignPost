@@ -55,11 +55,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double longitude = message.getLocation().longitude;
         LatLng location = new LatLng(latitude, longitude);
 
-        mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) );
+
         mMap.addMarker(new MarkerOptions().position(location).title(message.getMessage()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
 
     }
+
+
 }
 
 
