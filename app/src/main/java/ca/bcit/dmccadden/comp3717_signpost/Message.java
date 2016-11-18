@@ -13,8 +13,14 @@ import java.util.ArrayList;
 
 public class Message implements Parcelable {
 
-    private String message;
 
+    public static ArrayList<Message> messages;
+
+
+
+
+
+    private String message;
     private LatLng location;
 
     Message(String m, LatLng l){
@@ -23,22 +29,6 @@ public class Message implements Parcelable {
     }
 
 
-
-    public static ArrayList<Message> testMessages(){
-
-        ArrayList<Message> messages = new ArrayList<>();
-
-        messages.add(new Message("bcit",             new LatLng(49.249110, -123.002753) ));
-        messages.add(new Message("metrotown",        new LatLng(49.227882, -123.002024) ));
-        messages.add(new Message("deer lake",        new LatLng(49.236749, -122.973264) ));
-        messages.add(new Message("central perk",     new LatLng(49.227341, -123.017770) ));
-        messages.add(new Message("burnaby hospital", new LatLng(49.249498, -123.016057) ));
-        messages.add(new Message("london",           new LatLng(51.587897, -0.243054)   ));
-
-
-
-        return messages;
-    }
 
     public String getMessage(){
         return message;
