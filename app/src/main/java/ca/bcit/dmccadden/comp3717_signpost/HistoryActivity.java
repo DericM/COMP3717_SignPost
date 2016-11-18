@@ -1,47 +1,34 @@
 package ca.bcit.dmccadden.comp3717_signpost;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.vision.text.Line;
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.async.parser.JSONObjectParser;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
-import static java.security.AccessController.getContext;
 
 public class HistoryActivity extends Activity {
 
@@ -64,8 +51,8 @@ public class HistoryActivity extends Activity {
         getMessagesFromServer();
 
 
-        /*
-        final long period = 3000;
+
+        final long period = 5000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -73,7 +60,7 @@ public class HistoryActivity extends Activity {
 
             }
         }, 0, period);
-*/
+
 
         //buildMessageList();
 
