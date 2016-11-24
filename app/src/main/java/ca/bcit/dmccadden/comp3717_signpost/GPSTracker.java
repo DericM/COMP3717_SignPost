@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
 
-    private HistoryActivity historyActivity;
+    private MainActivity historyActivity;
 
     private final Context mContext;
 
@@ -44,7 +44,7 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(HistoryActivity context) {
+    public GPSTracker(MainActivity context) {
         historyActivity = context;
         this.mContext = context;
         getLocation();
@@ -219,4 +219,6 @@ public class GPSTracker extends Service implements LocationListener {
         else
             return false;
     }
+
+
 }
