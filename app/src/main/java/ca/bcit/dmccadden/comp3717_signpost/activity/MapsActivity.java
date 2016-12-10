@@ -1,6 +1,5 @@
-package ca.bcit.dmccadden.comp3717_signpost;
+package ca.bcit.dmccadden.comp3717_signpost.activity;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +11,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import ca.bcit.dmccadden.comp3717_signpost.helper.Message;
+import ca.bcit.dmccadden.comp3717_signpost.R;
 
 import static android.content.ContentValues.TAG;
 

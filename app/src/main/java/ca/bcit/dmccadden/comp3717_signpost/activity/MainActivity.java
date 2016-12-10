@@ -1,13 +1,13 @@
-package ca.bcit.dmccadden.comp3717_signpost;
+package ca.bcit.dmccadden.comp3717_signpost.activity;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,18 +32,26 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ca.bcit.dmccadden.comp3717_signpost.app.AppPreferences;
+import ca.bcit.dmccadden.comp3717_signpost.helper.Area;
+import ca.bcit.dmccadden.comp3717_signpost.helper.ContentUpdateService;
+import ca.bcit.dmccadden.comp3717_signpost.helper.GPSTracker;
+import ca.bcit.dmccadden.comp3717_signpost.helper.Message;
+import ca.bcit.dmccadden.comp3717_signpost.R;
+import ca.bcit.dmccadden.comp3717_signpost.SQLiteHandler;
+import ca.bcit.dmccadden.comp3717_signpost.SessionManager;
+
 import static android.content.ContentValues.TAG;
 
 public class  MainActivity extends Activity {
+    private int userId = -1;
 
-    private GPSTracker gps;
-    //private ArrayList<Message> messages;
-    private ListView listView;
+    private ListView             listView;
 
-
-    private SQLiteHandler db;
-    private SessionManager session;
-
+    private GPSTracker           gps;
+    private SQLiteHandler        db;
+    private SessionManager       session;
+    private ContentUpdateService updateService;
 
 
     @Override
@@ -51,45 +59,14 @@ public class  MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-
-        //txtName = (TextView) findViewById(R.id.name);
-        //txtEmail = (TextView) findViewById(R.id.email);
-        //btnLogout = (Button) findViewById(R.id.btnLogout);
-
-        // SqLite database handler
-        db = new SQLiteHandler(getApplicationContext());
-
-        // session manager
-        session = new SessionManager(getApplicationContext());
-
-        if (!session.isLoggedIn()) {
-            logoutUser();
-        }
-
-        // Fetching user details from sqlite
-        HashMap<String, String> user = db.getUserDetails();
-
-        String name = user.get("name");
-        String email = user.get("email");
-
-        // Displaying the user details on the screen
-        Log.d(TAG, name);
-        Log.d(TAG, email);
-        //txtName.setText(name);
-        //txtEmail.setText(email);
-
-
-
-
-
         gps = new GPSTracker(MainActivity.this);
+        //updateService = new ContentUpdateService(gps);
+
         listView = (ListView) findViewById(R.id.message_history);
 
         Message.messages = new ArrayList<Message>();
 
         getMessagesFromServer();
-
-
 
         final long period = 5000;
         new Timer().schedule(new TimerTask() {
@@ -99,9 +76,6 @@ public class  MainActivity extends Activity {
 
             }
         }, 0, period);
-
-
-        //buildMessageList();
 
 
         listView.setClickable(true);
@@ -129,6 +103,15 @@ public class  MainActivity extends Activity {
             }
         });
 
+        AppPreferences prefs = new AppPreferences(this);
+        prefs.clear(); //<--- FOr demonstration purposes. Makes log in pop up on every run
+        if(prefs.isLoggedIn() == false) {
+            //starts login activity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, 2);
+        } else {
+            userId = prefs.getId();
+        }
     }
 
     @Override
@@ -139,8 +122,18 @@ public class  MainActivity extends Activity {
             case (1) : {
                 if (resultCode == Activity.RESULT_OK) {
                     if(gps.canGetLocation()) {
-                        double latitude = gps.getLocation().getLatitude();
-                        double longitude = gps.getLocation().getLongitude();
+
+                        double latitude = 0;
+                        double longitude = 0;
+
+                        try {
+                            latitude = gps.getLocation().getLatitude();
+                            longitude = gps.getLocation().getLongitude();
+                        }
+                        catch(Exception e){
+                            e.printStackTrace();
+                        }
+
                         String s_message = data.getStringExtra("message");
 
                         addMessage(new Message(s_message, new LatLng(latitude, longitude)));
@@ -148,6 +141,11 @@ public class  MainActivity extends Activity {
                 }
                 break;
             }
+            case 2:
+                if(resultCode == Activity.RESULT_OK) {
+                    userId = data.getIntExtra("id", -2);
+                    Log.v("SJIT", "" + userId);
+                }
         }
     }
 
@@ -161,8 +159,14 @@ public class  MainActivity extends Activity {
 
         if(gps.canGetLocation()) {
 
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
+
+            try {
+                latitude = gps.getLatitude();
+                longitude = gps.getLongitude();
+            }
+            catch(Exception exception){
+                exception.printStackTrace();
+            }
 
             Area area = new Area(longitude, latitude);
             Log.d(TAG, longitude + " , " + latitude);
@@ -190,7 +194,7 @@ public class  MainActivity extends Activity {
                                         Message.messages.clear();
                                         for (int i = 0; i < jsonArray.length(); i++) {
                                             JSONObject explrObject = jsonArray.getJSONObject(i);
-
+                                            //int messageID    = Integer.parseInt(explrObject.getString("messageid"));
                                             String message   = explrObject.getString("message");
                                             double latitude  = Double.parseDouble(explrObject.getString("lattitude"));
                                             double longitude = Double.parseDouble(explrObject.getString("longitude"));
@@ -218,8 +222,14 @@ public class  MainActivity extends Activity {
         List<String> messageList;
         ArrayAdapter<String> adapter;
 
-        messageList = new ArrayList<>();;
-        printCoords(gps.getLocation().getLatitude(), gps.getLocation().getLongitude());
+        messageList = new ArrayList<>();
+
+        try{
+            printCoords(gps.getLocation().getLatitude(), gps.getLocation().getLongitude());
+        }
+        catch(Exception e) {
+            Log.d(TAG, e.getMessage());
+        }
 
 
         for(int i=0; i<Message.messages.size(); i++){
@@ -242,36 +252,27 @@ public class  MainActivity extends Activity {
                         android.R.id.text2});
         listView.setAdapter(adapter1);
 
-        /*
-        adapter = new ArrayAdapter<>(getBaseContext(),
-                android.R.layout.simple_list_item_2,
-                messageList);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        */
     }
 
 
 
     public void addMessage(Message message){
         Ion.with(this)
-                .load("http://signpost.nfshost.com/php/post_message.php")
-                .setBodyParameter("id", "56")
-                .setBodyParameter("message", message.getMessage())
-                .setBodyParameter("lattitude", ""+message.getLocation().latitude)
-                .setBodyParameter("longitude", ""+message.getLocation().longitude)
-                .asString()
-                .setCallback(
-                        new FutureCallback<String>() {
-                            @Override
-                            public void onCompleted(Exception e, String result) {
-                                Log.d(TAG, result);
+            .load("http://signpost.nfshost.com/php/post_message.php")
+            .setBodyParameter("id", String.valueOf(userId))
+            .setBodyParameter("message", message.getMessage())
+            .setBodyParameter("lattitude", ""+message.getLocation().latitude)
+            .setBodyParameter("longitude", ""+message.getLocation().longitude)
+            .asString()
+            .setCallback(
+                new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        Log.d(TAG, result);
 
-                            }
-                        }
-                );
-        //Message.messages.add(message);
-        //buildMessageList();
+                    }
+                }
+        );
     }
 
     public void printCoords(double latitude, double longitude) {
@@ -306,7 +307,21 @@ public class  MainActivity extends Activity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
 
+        NotificationCompat.Builder mBuilder =   new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark) // notification icon
+                .setContentTitle("Notification!") // title for notification
+                .setContentText("Hello word") // message for notification
+                .setAutoCancel(true); // clear notification after click
+        Intent intent = new Intent(this, MainActivity.class);
+        //PendingIntent pi = PendingIntent.getActivity(this,0,intent,Intent.FLAG_ACTIVITY_NEW_TASK);
+        //mBuilder.setContentIntent(pi);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(0, mBuilder.build());
 
-
+    }
 }

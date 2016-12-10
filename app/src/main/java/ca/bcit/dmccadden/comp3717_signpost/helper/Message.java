@@ -1,15 +1,20 @@
-package ca.bcit.dmccadden.comp3717_signpost;
+package ca.bcit.dmccadden.comp3717_signpost.helper;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by Deric on 16/10/30.
- */
+import static android.content.ContentValues.TAG;
+
 
 public class Message implements Parcelable {
 
@@ -17,18 +22,28 @@ public class Message implements Parcelable {
     public static ArrayList<Message> messages;
 
 
-
-
-
+    private int messageID;
     private String message;
     private LatLng location;
+    private int viewed;
 
-    Message(String m, LatLng l){
+
+    public Message(String m, LatLng l){
         message = m;
         location = l;
     }
 
+    public Message(int ID, String m, LatLng l, int v){
+        messageID = ID;
+        message = m;
+        location = l;
+        viewed = v;
+    }
 
+
+    public int getID(){
+        return messageID;
+    }
 
     public String getMessage(){
         return message;
@@ -36,6 +51,14 @@ public class Message implements Parcelable {
 
     public LatLng getLocation(){
         return location;
+    }
+
+    public int is_viewed(){
+        return viewed;
+    }
+
+    public void view(){
+        viewed = 1;
     }
 
 

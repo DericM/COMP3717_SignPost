@@ -1,4 +1,4 @@
-package ca.bcit.dmccadden.comp3717_signpost;
+package ca.bcit.dmccadden.comp3717_signpost.app;
 
 
 import android.app.Application;

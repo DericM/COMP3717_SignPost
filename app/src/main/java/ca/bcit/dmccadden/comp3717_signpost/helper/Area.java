@@ -1,4 +1,4 @@
-package ca.bcit.dmccadden.comp3717_signpost;
+package ca.bcit.dmccadden.comp3717_signpost.helper;
 
 /**
  * Created by knome on 2016-11-18.

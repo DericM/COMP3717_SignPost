@@ -16,7 +16,7 @@
         android:paddingRight="20dp" >
 
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/username"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -56,6 +56,24 @@
 
         <!-- Login Button -->
 
+        <EditText
+            android:id="@+id/confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@color/input_register_bg"
+            android:hint="@string/hint_password_confirm"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="@color/input_register"
+            android:textColorHint="@color/input_register_hint" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/register_status" />
+
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="fill_parent"
@@ -63,20 +81,11 @@
             android:layout_marginTop="20dip"
             android:background="#ea4c88"
             android:text="@string/btn_register"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:onClick="register"/>
 
         <!-- Link to Login Screen -->
 
-        <Button
-            android:id="@+id/btnLinkToLoginScreen"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dip"
-            android:background="@null"
-            android:text="@string/btn_link_to_login"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
     </LinearLayout>
 
 </LinearLayout>

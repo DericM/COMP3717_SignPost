@@ -25,7 +25,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end|bottom"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:src="@drawable/ic_create" />
 
     <ListView android:id="@+id/message_history"
         android:layout_height="wrap_content"
